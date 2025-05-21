@@ -1,0 +1,1 @@
+./k6 -e CONFIG_PATH=./test/testdata/extension-config.yaml run ./test/ansible.test.js

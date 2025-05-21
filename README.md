@@ -1,0 +1,1 @@
+Building k6: ~/go/bin/xk6 build --with xk6-ansible-config-loader=.

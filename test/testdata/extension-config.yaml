@@ -1,0 +1,9 @@
+limits:
+  - "kubernetes"
+
+inventories:
+  - "inventory/production"
+
+vaults:
+  - path: "/secure/prod/secreEs"
+    password: "s3cr3tPr0dP@ss"
