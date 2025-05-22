@@ -1,10 +1,20 @@
-module github.com/GarlicLabs/xk6-ansible-config-loader
+module github.com/garliclabs/xk6-ansible-config-loader
 
 go 1.24.2
 
 require (
 	go.k6.io/k6 v1.0.0
 	gopkg.in/yaml.v2 v2.4.0
+)
+
+require (
+	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
+	github.com/relex/aini v1.6.0 // indirect
+	github.com/samber/lo v1.38.1 // indirect
+	github.com/sosedoff/ansible-vault-go v0.2.0 // indirect
+	golang.org/x/crypto v0.37.0 // indirect
+	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (

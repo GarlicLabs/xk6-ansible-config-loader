@@ -1,9 +1,16 @@
 limits:
-  - "kubernetes"
+  - "loadbalancer"
 
-inventories:
-  - "inventory/production"
+inventory:
+  path: "./test/testdata/ansible/prod-inventory.yaml"
+  group_vars: "./test/testdata/ansible/group_vars"
+  host_vars: "./test/testdata/ansible/host_vars"
+  vault_password: "S3Cret!"
 
 vaults:
-  - path: "/secure/prod/secreEs"
-    password: "s3cr3tPr0dP@ss"
+  - path: "./test/testdata/ansible/prod-vault.yaml"
+    password: "S3Cret!"
+
+var_files:
+  - path: "./test/testdata/ansible/ansible-vars.yaml"
+    vault_password: "S3Cret!"

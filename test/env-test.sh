@@ -1,1 +1,0 @@
-./k6 -e XK6_LIMITS=kubernetes,loadbalancer -e XK6_INVENTORIES=./testdata/prod.yaml,./testdata/test.yaml -e XK6_VAULT={path: ./testdata/prod-vault.yaml, password: Test1234} run ansible.test.js

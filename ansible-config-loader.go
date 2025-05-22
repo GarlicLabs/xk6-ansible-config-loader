@@ -1,19 +1,11 @@
 package ansibleConfigLoader
 
 import (
-	"os"
-
-	"github.com/GarlicLabs/xk6-ansible-config-loader/ansible"
-	"github.com/dop251/goja"
 	"go.k6.io/k6/js/modules"
 )
 
 func init() {
-	modules.Register("k6/x/ansible-config-loader", new(Module))
-}
-
-type Module struct {
-	AnsibleVariables ansible.AnsibleVariables
+	modules.Register("k6/x/ansible-config-loader", new(AnsibleVariables))
 }
 
 type EnvironmentVariables struct {
@@ -23,31 +15,14 @@ type EnvironmentVariables struct {
 	Limits      string
 }
 
-func (c *Module) GetConfig(configPath string) (Module, error) {
-	extensionConfig, err := ansible.GetExtensionConfig(configPath)
+func (c *AnsibleVariables) GetConfig(configPath string) (AnsibleVariables, error) {
+	extensionConfig, err := GetExtensionConfig(configPath)
 	if err != nil {
 		panic(err)
 	}
-	ansibleVars, err := ansible.GetVars(extensionConfig)
+	ansibleVars, err := GetVars(extensionConfig)
 	if err != nil {
 		panic(err)
 	}
-	return Module{AnsibleVariables: ansibleVars}, nil
-}
-
-func getEnvVars(rt *goja.Runtime) EnvironmentVariables {
-	var envVars EnvironmentVariables
-	if val, ok := os.LookupEnv("XK6_CONFIG_PATH"); ok {
-		envVars.ConfigPath = val
-	}
-	if val, ok := os.LookupEnv("XK6_INVENTORIES"); ok {
-		envVars.Inventories = val
-	}
-	if val, ok := os.LookupEnv("XK6_VAULTS"); ok {
-		envVars.Vaults = val
-	}
-	if val, ok := os.LookupEnv("XK6_LIMITS"); ok {
-		envVars.Limits = val
-	}
-	return envVars
+	return ansibleVars, nil
 }

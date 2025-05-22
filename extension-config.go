@@ -1,4 +1,4 @@
-package ansible
+package ansibleConfigLoader
 
 import (
 	"errors"
@@ -8,10 +8,15 @@ import (
 )
 
 type ExtensionConfig struct {
-	Limits      []string `yaml:"limits"`
-	Inventories []string `yaml:"inventories"`
-	Vaults      []Vault  `yaml:"vaults"`
-	Variables   []string `yaml:"variables"`
+	Limits    []string  `yaml:"limits"`
+	Inventory Inventory `yaml:"inventory"`
+	Vaults    []Vault   `yaml:"vaults"`
+	VarFiles  []VarFile `yaml:"var_files"`
+}
+
+type VarFile struct {
+	Path          string `yaml:"path"`
+	VaultPassword string `yaml:"vault_password"`
 }
 
 type Vault struct {
@@ -19,12 +24,18 @@ type Vault struct {
 	Password string `yaml:"password"`
 }
 
+type Inventory struct {
+	Path          string `yaml:"path"`
+	GroupVars     string `yaml:"group_vars"`
+	HostVars      string `yaml:"host_vars"`
+	VaultPassword string `yaml:"vault_password"`
+}
+
 func GetExtensionConfig(configPath string) (ExtensionConfig, error) {
 	config, err := getConfigFromFile(configPath)
 	if err != nil {
 		return ExtensionConfig{}, err
 	}
-	getConfigFromEnvVars(&config)
 	validateExtensionConfig(&config)
 	return config, nil
 }
@@ -36,7 +47,7 @@ func validateExtensionConfig(config *ExtensionConfig) error {
 		}
 	}
 
-	hasInventory := len(config.Inventories) > 0
+	isInventory := config.Inventory != Inventory{}
 	hasValidVault := false
 	for _, vault := range config.Vaults {
 		if vault.Path != "" && vault.Password != "" {
@@ -44,23 +55,21 @@ func validateExtensionConfig(config *ExtensionConfig) error {
 			break
 		}
 	}
-	hasVariables := len(config.Variables) > 0
+	hasVariables := len(config.VarFiles) > 0
 
-	if !hasInventory && !hasValidVault && !hasVariables {
+	if !isInventory && !hasValidVault && !hasVariables {
 		return errors.New("at least one of inventories, vaults (with path and password), or variables must be set")
 	}
 
-	if len(config.Limits) > 0 && !hasInventory {
+	if len(config.Limits) > 0 && !isInventory {
 		return errors.New("inventories must be set if limits are specified")
 	}
-	if len(config.Inventories) == 0 && len(config.Vaults) == 0 {
-		return errors.New("no inventories or vaults defined")
-	}
+	return nil
 }
 
 func getConfigFromFile(configPath string) (ExtensionConfig, error) {
 	if configPath == "" {
-		return ExtensionConfig{}, nil
+		return ExtensionConfig{}, errors.New("Config path is empty")
 	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return ExtensionConfig{}, errors.New("Config file not found with path: " + configPath)
@@ -77,8 +86,4 @@ func getConfigFromFile(configPath string) (ExtensionConfig, error) {
 	}
 
 	return config, nil
-}
-
-func getConfigFromEnvVars(config *ExtensionConfig) {
-	// __ENV.
 }
