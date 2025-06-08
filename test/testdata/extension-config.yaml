@@ -1,6 +1,3 @@
-limits:
-  - "loadbalancer"
-
 inventory:
   path: "./test/testdata/ansible/prod-inventory.yaml"
   group_vars: "./test/testdata/ansible/group_vars"

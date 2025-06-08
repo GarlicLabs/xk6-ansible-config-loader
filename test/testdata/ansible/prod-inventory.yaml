@@ -2,17 +2,13 @@
 all:
   hosts:
     cp-ooo.example.com: 
-      ansible_python_interpreter: /usr/bin/python3
+      inventory_host_var: cp_example
     worker-xxx.example.com:
-      ansible_python_interpreter: /usr/bin/python3
     worker-yyy.example.com:
-      ansible_python_interpreter: /usr/bin/python3
     lb-aaa.example.com:
-      ansible_python_interpreter: /usr/bin/python3
     lb-bbb.example.com:
-      ansible_python_interpreter: /usr/bin/python3
     monitoring-nnn.example.com:
-      ansible_python_interpreter: /usr/bin/python3
+      inventory_host_var: monitoring_example
   children:
     kubernetes:
       hosts:
@@ -25,3 +21,4 @@ all:
         lb-bbb.example.com:
     monitoring:
       monitoring-nnn.example.com:
+        inventory_group_var: blabla

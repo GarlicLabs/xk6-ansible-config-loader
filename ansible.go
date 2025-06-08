@@ -196,6 +196,9 @@ func getInventoryVars(inv Inventory, limits []string) (InventoryConfig, error) {
 }
 
 func filterGroups(groupConf []groupConfig, limits []string) []groupConfig {
+	if len(limits) == 0 {
+		return groupConf
+	}
 	excludeMap := make(map[string]bool)
 	for _, name := range limits {
 		excludeMap[name] = true
@@ -203,7 +206,7 @@ func filterGroups(groupConf []groupConfig, limits []string) []groupConfig {
 
 	var result []groupConfig
 	for _, g := range groupConf {
-		if !excludeMap[g.GroupName] {
+		if excludeMap[g.GroupName] {
 			result = append(result, g)
 		}
 	}
@@ -211,11 +214,13 @@ func filterGroups(groupConf []groupConfig, limits []string) []groupConfig {
 }
 
 func getHostVars(invConf InventoryConfig, password string) (InventoryConfig, error) {
-	result := invConf
+	var result InventoryConfig
 	for _, g := range invConf.Groups {
-		for _, h := range g.Hosts {
+		updatedHosts := make([]hostConfig, len(g.Hosts))
+		for i, h := range g.Hosts {
 			files, err := getAllFiles(h.Path, h.HostName)
 			if err != nil {
+				updatedHosts[i] = h
 				continue
 			}
 			var vars map[string]interface{}
@@ -239,18 +244,20 @@ func getHostVars(invConf InventoryConfig, password string) (InventoryConfig, err
 					h.HostVars[k] = strVal
 				}
 			}
-			g.Hosts = append(g.Hosts, h)
+			updatedHosts[i] = h
 		}
+		g.Hosts = updatedHosts
 		result.Groups = append(result.Groups, g)
 	}
 	return result, nil
 }
 
 func getGroupVars(invConf InventoryConfig, password string) (InventoryConfig, error) {
-	result := invConf
+	var result InventoryConfig
 	for _, g := range invConf.Groups {
 		files, err := getAllFiles(g.Path, g.GroupName)
 		if err != nil {
+			result.Groups = append(result.Groups, g)
 			continue
 		}
 		var vars map[string]interface{}
