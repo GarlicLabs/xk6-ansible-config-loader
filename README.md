@@ -75,8 +75,6 @@ You will recieve an object that contains all your data in following structure:
   "top": "secret",
   "secret": "top"
  }
-}
-
 ```
 
 ## Build for Development
