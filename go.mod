@@ -1,4 +1,4 @@
-module github.com/garliclabs/xk6-ansible-config-loader
+module github.com/GarlicLabs/xk6-ansible-config-loader
 
 go 1.24.2
 
