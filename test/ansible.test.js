@@ -17,4 +17,7 @@ export default function () {
   if (allGroup.length !== 1) {
     throw new Error('Expected exactly one group with name "all"');
   }
+  if (k8sGroup[0].group_vars.inline_secret !== "InlineVaultSecret") {
+    throw new Error('Inline vault secret was not parsed"');
+  }
 }

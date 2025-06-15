@@ -6,6 +6,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"strings"
 
 	vault "github.com/sosedoff/ansible-vault-go"
 
@@ -159,7 +160,7 @@ func getAnsibleVars(files []VarFile) (map[string]interface{}, error) {
 func decryptVars(vars map[string]interface{}, password string) (map[string]interface{}, error) {
 	for k, v := range vars {
 		if strVal, ok := v.(string); ok {
-			if len(strVal) > 12 && strVal[:12] == "$ANSIBLE_VAULT" {
+			if strings.HasPrefix(strVal, "$ANSIBLE_VAULT") {
 				vaultStr, err := vault.Decrypt(strVal, password)
 				if err != nil {
 					return nil, err
